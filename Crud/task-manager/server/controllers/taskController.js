@@ -7,7 +7,7 @@ export const createTask = async (req, res) => {
         if (!title || !priority)
             return res.status(400).json({
                 success: false,
-                message: "Task title is required"
+                message: "Task title or priority is required"
             });
 
         const task = await TaskSchema.create({
@@ -112,7 +112,7 @@ export const updateTask = async (req, res) => {
             updates.title = updates.title.trim();
         }
 
-        const task = await Task.findByIdAndUpdate(
+        const task = await TaskSchema.findByIdAndUpdate(
             id,
             updates,
             {
@@ -150,7 +150,7 @@ export const deleteTask = async (req, res) => {
             });
         }
 
-        const task = await Task.findByIdAndDelete(id);
+        const task = await TaskSchema.findByIdAndDelete(id);
 
         if (!task) {
             return res.status(404).json({
