@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import TaskSchema from "../models/Task.js"
 
-export const createTask = async (req, res) => {
+export const createTask = async (req, res, next) => {
     try {
         const { title, description, priority } = req.body
         if (!title || !priority)
@@ -23,7 +23,7 @@ export const createTask = async (req, res) => {
         })
 
     } catch (error) {
-        console.error(error)
+        next(error)
     }
 }
 

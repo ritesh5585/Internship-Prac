@@ -1,5 +1,5 @@
 
-const API_URL = "http://localhost:5000/api/tasks";
+const API_URL = "http://localhost:3000/api/task";
 
 // GET ALL TASKS
 export const getTasks = async () => {

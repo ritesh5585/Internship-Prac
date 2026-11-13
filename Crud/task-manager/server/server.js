@@ -13,13 +13,13 @@ const app = express()
 await database()
 
 app.use(express.json())
-app.use(errorMiddleware)
 app.use(morgan("dev"))
 app.use(cors({
     origin: process.env.CLIENT_URL
 }))
 
 app.use("/api/task", Taskroute)
+app.use(errorMiddleware)
 
 app.listen(3000, ()=> {
     console.log("server is running on port 3000")})
