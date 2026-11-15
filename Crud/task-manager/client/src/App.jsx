@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
+
 import TaskForm from "./components/task/TaskForm";
-import { createTask, getTasks } from "./services/taskapi";
+import TaskEditForm from "./components/task/TaskEditForm";
 import TaskList from "./components/task/TaskList";
+
+import EditButton from "./components/task/EditButton";
+import DeleteButton from "./components/task/DeleteButton";
+
+import {
+  createTask,
+  getTasks,
+  updateTask,
+  deleteTask,
+} from "./services/taskapi";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // Fix: Start with true
-  const [selectedTask, setSelectedTask] = useState(null); // Clicked task store karne ke liye
+  const [loading, setLoading] = useState(true);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showEditForm, setShowEditForm] = useState(false);
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
@@ -35,6 +47,27 @@ function App() {
     } catch (err) {
       alert("Failed to add task");
     }
+  };
+
+  const handleUpdateTask = async (id, updateTask) => {
+    try {
+      const updatedTask = await updateTask(id, updateTask);
+
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task._id ? updateTask : task)),
+      );
+    } catch (error) {
+      console.log(error.message || "Failed to update task");
+      throw error;
+    }
+  };
+
+  const handleDeleteTask = async (id) => {
+    await deleteTask(id);
+
+    setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
+
+    setSelectedTask(null);
   };
 
   return (
