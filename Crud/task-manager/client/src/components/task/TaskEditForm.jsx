@@ -1,36 +1,42 @@
-import React from "react";
+import { useState } from "react";
+import { X, Save } from "lucide-react"; // Fixed: Save icon import kiya
 
-const TaskEditForm = ({ task, onclose, onUpdateTask }) => {
-  const [formData, setFormData] = useState({
-    title: task.title || "",
-    description: task.description || "",
-    priority: task.priority || "medium",
-    status: task.status || "pending",
-  });
+const TaskEditForm = ({ task, onClose, onUpdateTask }) => {
+  // Alag-alag state, jisse samajhna aasan hai
+  const [title, setTitle] = useState(task.title || "");
+  const [description, setDescription] = useState(task.description || "");
+  const [priority, setPriority] = useState(task.priority || "medium");
+  const [status, setStatus] = useState(task.status || "pending");
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       setLoading(true);
-      await onUpdateTask(task._id, formData);
-      onclose();
-    } catch (error) {}
+
+      // Saara data ek object mein banakar bhej diya
+      await onUpdateTask(task._id, {
+        title,
+        description,
+        priority,
+        status,
+      });
+
+      onClose(); // Fixed: capital 'C'
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("Failed to update task. Please try again.");
+    } finally {
+      setLoading(false); // Loading hamesha band hogi
+    }
   };
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
       <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+        {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
@@ -42,14 +48,13 @@ const TaskEditForm = ({ task, onclose, onUpdateTask }) => {
         <h2 className="mb-5 text-xl font-bold text-slate-800">Edit Task</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Title */}
           <div>
             <label className="mb-1 block text-sm font-medium">Task Title</label>
-
             <input
               type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)} // Direct update
               required
               minLength={2}
               maxLength={100}
@@ -57,27 +62,25 @@ const TaskEditForm = ({ task, onclose, onUpdateTask }) => {
             />
           </div>
 
+          {/* Description */}
           <div>
             <label className="mb-1 block text-sm font-medium">
               Description
             </label>
-
             <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               rows={3}
               className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
             />
           </div>
 
+          {/* Priority */}
           <div>
             <label className="mb-1 block text-sm font-medium">Priority</label>
-
             <select
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
               className="w-full rounded-lg border border-slate-300 p-3"
             >
               <option value="low">Low</option>
@@ -86,13 +89,12 @@ const TaskEditForm = ({ task, onclose, onUpdateTask }) => {
             </select>
           </div>
 
+          {/* Status */}
           <div>
             <label className="mb-1 block text-sm font-medium">Status</label>
-
             <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
               className="w-full rounded-lg border border-slate-300 p-3"
             >
               <option value="pending">Pending</option>
@@ -100,6 +102,7 @@ const TaskEditForm = ({ task, onclose, onUpdateTask }) => {
             </select>
           </div>
 
+          {/* Buttons */}
           <div className="flex justify-end gap-3 pt-3">
             <button
               type="button"

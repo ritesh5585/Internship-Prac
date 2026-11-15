@@ -1,7 +1,7 @@
 import React from "react";
 import { Pencil } from "lucide-react";
 
-const EditButton = () => {
+const EditButton = ({onClick}) => {
   return (
     <button
       type="button"
